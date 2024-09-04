@@ -2,11 +2,17 @@ package com.ilemgroup.inventory.product;
 
 import java.sql.Timestamp;
 
+import org.springframework.format.annotation.NumberFormat;
+
+import jakarta.validation.constraints.NotEmpty;
+
 public class Product {
 
-    private int product_id;
+    private Long product_id;
+    @NotEmpty
     private String name;
     private String description;
+    @NotEmpty
     private float price;
     private float cost;
     private int quantity_in_stock;
@@ -18,7 +24,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(int product_id, String name, String description, float price, float cost, int quantity_in_stock,
+    public Product(Long product_id, String name, String description, float price, float cost, int quantity_in_stock,
             int reorder_level, boolean is_active, Timestamp created_at, Timestamp updated_at) {
         this.product_id = product_id;
         this.name = name;
@@ -32,11 +38,11 @@ public class Product {
         this.updated_at = updated_at;
     }
 
-    public int getProduct_id() {
+    public Long getProduct_id() {
         return product_id;
     }
 
-    public void setProduct_id(int product_id) {
+    public void setProduct_id(Long product_id) {
         this.product_id = product_id;
     }
 
@@ -88,7 +94,7 @@ public class Product {
         this.reorder_level = reorder_level;
     }
 
-    public boolean isIs_active() {
+    public boolean getIs_active() {
         return is_active;
     }
 
