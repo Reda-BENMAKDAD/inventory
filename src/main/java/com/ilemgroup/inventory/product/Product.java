@@ -2,8 +2,6 @@ package com.ilemgroup.inventory.product;
 
 import java.sql.Timestamp;
 
-import org.springframework.format.annotation.NumberFormat;
-
 import jakarta.validation.constraints.NotEmpty;
 
 public class Product {

@@ -1,7 +1,6 @@
 package com.ilemgroup.inventory.product;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ProductDao {
 
