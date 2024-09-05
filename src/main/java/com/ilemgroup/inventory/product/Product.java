@@ -116,33 +116,11 @@ public class Product {
         this.updated_at = updated_at;
     }
 
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public String toString() {
         return "Product [product_id=" + product_id + ", name=" + name + ", description=" + description + ", price="
                 + price + ", cost=" + cost + ", quantity_in_stock=" + quantity_in_stock + ", reorder_level="
                 + reorder_level + ", is_active=" + is_active + ", created_at=" + created_at + ", updated_at="
                 + updated_at + "]";
-    }
-
-    
-
-    
-
-
-
-   
-
-
-    
+    } 
 }
