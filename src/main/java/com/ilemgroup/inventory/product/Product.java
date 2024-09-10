@@ -2,6 +2,7 @@ package com.ilemgroup.inventory.product;
 
 import java.sql.Timestamp;
 
+
 import jakarta.validation.constraints.NotEmpty;
 
 public class Product {

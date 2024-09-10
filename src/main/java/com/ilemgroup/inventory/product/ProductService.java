@@ -1,6 +1,7 @@
 package com.ilemgroup.inventory.product;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 
 
@@ -12,12 +13,12 @@ public class ProductService {
         this.productDao = productDao;
     }  
 
-    public Product getProductById(Long id) {
+    public Optional<Product> getProductById(Long id) {
         return productDao.findById(id);
 
     }
 
-    public List<Product> getAllProducts() {
+    public List<Optional<Product>> getAllProducts() {
         return this.productDao.findAll();
     }
 

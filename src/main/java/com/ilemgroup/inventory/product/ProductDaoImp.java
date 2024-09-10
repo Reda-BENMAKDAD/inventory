@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 @Repository
 public class ProductDaoImp implements ProductDao {
@@ -17,7 +18,7 @@ public class ProductDaoImp implements ProductDao {
     }
 
     @Override
-    public Product findById(Long id) {
+    public Optional<Product> findById(Long id) {
         String sql = "SELECT * FROM product where product_id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new ProductRowMapper(), id);
@@ -27,7 +28,7 @@ public class ProductDaoImp implements ProductDao {
     }
 
     @Override
-    public List<Product> findAll() {
+    public List<Optional<Product>> findAll() {
         String sql = "SELECT * FROM product";
         return jdbcTemplate.query(sql, new ProductRowMapper());
 
@@ -51,10 +52,10 @@ public class ProductDaoImp implements ProductDao {
         jdbcTemplate.update(sql, id);
     }
 
-    private static class ProductRowMapper implements RowMapper<Product> {
+    private static class ProductRowMapper implements RowMapper<Optional<Product>> {
 
         @Override
-        public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public Optional<Product> mapRow(ResultSet rs, int rowNum) throws SQLException {
             Product product = new Product();
             product.setProduct_id(rs.getLong("product_id"));
             product.setName(rs.getString("name"));
@@ -66,7 +67,7 @@ public class ProductDaoImp implements ProductDao {
             product.setIs_active(rs.getBoolean("is_active"));
             product.setCreated_at(rs.getTimestamp("created_at"));
             product.setUpdated_at(rs.getTimestamp("updated_at"));
-            return product;
+            return Optional.of(product);
         }
         
     }
