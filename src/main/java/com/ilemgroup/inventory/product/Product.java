@@ -2,24 +2,40 @@ package com.ilemgroup.inventory.product;
 
 import java.sql.Timestamp;
 
+import org.hibernate.annotations.DynamicUpdate;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 
+@Entity
+@DynamicUpdate
 public class Product {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_seq")
+    @SequenceGenerator(name = "product_seq", sequenceName = "product_seq", allocationSize = 1)
     private Long product_id;
     @NotEmpty
     private String name;
     private String description;
-    @NotEmpty
+    @Positive
     private float price;
     private float cost;
     private int quantity_in_stock;
     private int reorder_level;
     private boolean is_active;
+    @Column(name = "created_at", insertable = false, updatable = false)
     private Timestamp created_at;
+    @Column(name = "updated_at", insertable = false, updatable = false)
     private Timestamp updated_at;
 
+//#region constructos
     public Product() {
     }
 
@@ -36,7 +52,9 @@ public class Product {
         this.created_at = created_at;
         this.updated_at = updated_at;
     }
+//#endregion
 
+//#region get&set
     public Long getProduct_id() {
         return product_id;
     }
@@ -116,6 +134,8 @@ public class Product {
     public void setUpdated_at(Timestamp updated_at) {
         this.updated_at = updated_at;
     }
+//#endregion get&set
+
 
     @Override
     public String toString() {

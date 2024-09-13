@@ -1,37 +1,43 @@
 package com.ilemgroup.inventory.product;
+
 import java.util.List;
-import org.springframework.stereotype.Service;
 import java.util.Optional;
 
-
+import org.springframework.stereotype.Service;
 
 @Service
 public class ProductService {
-    private final ProductDao productDao;
+    
+    private final ProductRepository productRepository;
 
-    public ProductService(ProductDao productDao) {
-        this.productDao = productDao;
-    }  
-
-    public Optional<Product> getProductById(Long id) {
-        return productDao.findById(id);
-
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
-    public List<Optional<Product>> getAllProducts() {
-        return this.productDao.findAll();
+
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+
+    public Optional<Product> getProductById(Long id) {
+        return productRepository.findById(id);
     }
 
     public void createProduct(Product product) {
-        productDao.save(product);
+        productRepository.save(product);
     }
 
-    public void updateProduct(Product product) {
-        productDao.update(product);
+    public Product updateProduct(Long id, Product product) {
+        if (productRepository.existsById(id)) {
+            product.setProduct_id(id);
+            return productRepository.save(product);
+        } else {
+            return null;
+        }
     }
 
-    public void deleteProduct(Long id) {
-        productDao.delete(id);
+
+    public void deleteProduct(Long id){
+        productRepository.deleteById(id);
     }
-    
 }
