@@ -54,7 +54,7 @@ public class ProductService {
             });
             return productRepository.save(product);
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ce produit n'existe pas");
         }
     }
 
