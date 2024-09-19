@@ -1,9 +1,14 @@
 package com.ilemgroup.inventory.product;
 
+import java.lang.reflect.Field;
+import org.springframework.util.ReflectionUtils;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class ProductService {
@@ -33,6 +38,23 @@ public class ProductService {
             return productRepository.save(product);
         } else {
             return null;
+        }
+    }
+
+    public Product patchProduct(Long id, Map<String, Object> updates) {
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if (optionalProduct.isPresent()) {
+            Product product = optionalProduct.get();
+            updates.forEach((key, value) -> {
+                Field field = ReflectionUtils.findField(Product.class, key);
+                if (field != null) {
+                    field.setAccessible(true);
+                    ReflectionUtils.setField(field, product, value);
+                }
+            });
+            return productRepository.save(product);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
         }
     }
 

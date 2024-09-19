@@ -2,7 +2,6 @@ package com.ilemgroup.inventory.product;
 
 import java.sql.Timestamp;
 
-import org.hibernate.annotations.DynamicUpdate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,7 +13,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 
 @Entity
-@DynamicUpdate
 public class Product {
 
     @Id
@@ -25,8 +23,8 @@ public class Product {
     private String name;
     private String description;
     @Positive
-    private float price;
-    private float cost;
+    private double price;
+    private double cost;
     private int quantity_in_stock;
     private int reorder_level;
     private boolean is_active;
@@ -79,7 +77,7 @@ public class Product {
         this.description = description;
     }
 
-    public float getPrice() {
+    public double getPrice() {
         return price;
     } 
 
@@ -87,7 +85,7 @@ public class Product {
         this.price = price;
     }
 
-    public float getCost() {
+    public double getCost() {
         return cost;
     }
 
