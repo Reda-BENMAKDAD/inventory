@@ -41,6 +41,7 @@ BEGIN
     EXECUTE IMMEDIATE 'DROP SEQUENCE purchase_order_seq';
     EXECUTE IMMEDIATE 'DROP SEQUENCE purchase_order_item_seq';
     EXECUTE IMMEDIATE 'DROP SEQUENCE inventory_transaction_seq';
+    commit;
 EXCEPTION
     WHEN OTHERS THEN
         NULL; -- Ignore errors if the sequence does not exist
@@ -49,13 +50,14 @@ END;
 
 -- Drop Tables
 BEGIN
-    EXECUTE IMMEDIATE 'DROP TABLE inventory_transaction';
-    EXECUTE IMMEDIATE 'DROP TABLE purchase_order_item';
-    EXECUTE IMMEDIATE 'DROP TABLE purchase_order';
-    EXECUTE IMMEDIATE 'DROP TABLE supplier';
-    EXECUTE IMMEDIATE 'DROP TABLE product';
-    EXECUTE IMMEDIATE 'DROP TABLE inventory_transaction_type';
-    EXECUTE IMMEDIATE 'DROP TABLE purchase_order_status';
+    EXECUTE IMMEDIATE 'DROP TABLE inventory_transaction CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE purchase_order_item CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE purchase_order CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE supplier CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE product CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE inventory_transaction_type CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE purchase_order_status CASCADE CONSTRAINTS';
+
 EXCEPTION
     WHEN OTHERS THEN
         NULL; -- Ignore errors if the table does not exist
@@ -64,8 +66,8 @@ END;
 
 -- Drop Lookup Tables
 BEGIN
-    EXECUTE IMMEDIATE 'DROP TABLE inventory_transaction_type';
-    EXECUTE IMMEDIATE 'DROP TABLE purchase_order_status';
+    EXECUTE IMMEDIATE 'DROP TABLE inventory_transaction_type CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE purchase_order_status CASCADE CONSTRAINTS';
 EXCEPTION
     WHEN OTHERS THEN
         NULL; -- Ignore errors if the lookup tables do not exist
@@ -115,27 +117,77 @@ COMMIT;
 -- Lookup Table for Purchase Order Status
 CREATE TABLE purchase_order_status (
     status_id NUMBER PRIMARY KEY,
-    status_description VARCHAR2(50) NOT NULL
-);
+    status_name VARCHAR2(50) UNIQUE NOT NULL,
+    status_description VARCHAR2(255),
+    is_active NUMBER(1) DEFAULT 1 CHECK (is_active IN (0, 1))
+    );
+
 COMMIT;
 
 -- Comments on Purchase Order Status Table
 COMMENT ON TABLE purchase_order_status IS 'Stores possible statuses for purchase orders.';
 COMMENT ON COLUMN purchase_order_status.status_id IS 'Unique identifier for each purchase order status.';
+COMMENT ON COLUMN purchase_order_status.status_name IS 'Unique name for each purchase order status.';
 COMMENT ON COLUMN purchase_order_status.status_description IS 'Description of the purchase order status.';
+COMMIT;
+
+-- Default Statuses for Purchase Orders
+INSERT INTO purchase_order_status (status_id, status_name, status_description)
+VALUES (1, 'Pending', 'Order has been placed but not yet processed.');
+
+INSERT INTO purchase_order_status (status_id, status_name, status_description)
+VALUES (2, 'Processing', 'Order is being processed by the supplier.');
+
+INSERT INTO purchase_order_status (status_id, status_name, status_description)
+VALUES (3, 'Shipped', 'Order has been shipped by the supplier.');
+
+INSERT INTO purchase_order_status (status_id, status_name, status_description)
+VALUES (4, 'Delivered', 'Order has been delivered to the customer.');
+
+INSERT INTO purchase_order_status (status_id, status_name, status_description)
+VALUES (5, 'Cancelled', 'Order has been cancelled by the customer or supplier.');
+
 COMMIT;
 
 -- Lookup Table for Inventory Transaction Types
 CREATE TABLE inventory_transaction_type (
     type_id NUMBER PRIMARY KEY,
-    type_description VARCHAR2(50) NOT NULL
-);
+    type_name VARCHAR2(50) UNIQUE NOT NULL,
+    type_description VARCHAR2(255),
+    is_active NUMBER(1) DEFAULT 1 CHECK (is_active IN (0, 1))
+    );
+
 COMMIT;
 
 -- Comments on Inventory Transaction Type Table
 COMMENT ON TABLE inventory_transaction_type IS 'Stores possible types for inventory transactions.';
 COMMENT ON COLUMN inventory_transaction_type.type_id IS 'Unique identifier for each inventory transaction type.';
+COMMENT ON COLUMN inventory_transaction_type.type_name IS 'Unique name for each inventory transaction type.';
 COMMENT ON COLUMN inventory_transaction_type.type_description IS 'Description of the inventory transaction type.';
+COMMIT;
+
+-- Default Types for Inventory Transactions
+INSERT INTO inventory_transaction_type (type_id, type_name, type_description)
+VALUES (1, 'Purchase', 'Stock added to inventory through a purchase order.');
+
+INSERT INTO inventory_transaction_type (type_id, type_name, type_description)
+VALUES (2, 'Sale', 'Stock removed from inventory through a sale.');
+
+INSERT INTO inventory_transaction_type (type_id, type_name, type_description)
+VALUES (3, 'Adjustment', 'Stock quantity adjusted manually.');
+
+INSERT INTO inventory_transaction_type (type_id, type_name, type_description)
+VALUES (4, 'Return', 'Stock returned to inventory.');
+
+INSERT INTO inventory_transaction_type (type_id, type_name, type_description)
+VALUES (5, 'Transfer', 'Stock transferred between locations.');
+
+INSERT INTO inventory_transaction_type (type_id, type_name, type_description)
+VALUES (6, 'Waste', 'Stock disposed of due to damage or expiration.');
+
+INSERT INTO inventory_transaction_type (type_id, type_name, type_description)
+VALUES (7, 'Other', 'Other types of inventory transactions.');
+
 COMMIT;
 
 -- Recreate Tables
@@ -197,7 +249,7 @@ CREATE TABLE purchase_order (
     order_id NUMBER DEFAULT purchase_order_seq.NEXTVAL PRIMARY KEY,
     supplier_id NUMBER REFERENCES supplier(supplier_id),
     order_date DATE NOT NULL,
-    status_id NUMBER REFERENCES purchase_order_status(status_id), -- Foreign key referencing the status lookup table
+    status_id NUMBER DEFAULT 1 REFERENCES purchase_order_status(status_id), -- Foreign key referencing the status lookup table
     total_cost NUMBER(10, 2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
