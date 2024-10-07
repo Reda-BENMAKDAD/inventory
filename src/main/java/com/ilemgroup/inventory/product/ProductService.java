@@ -3,7 +3,6 @@ package com.ilemgroup.inventory.product;
 import java.lang.reflect.Field;
 import org.springframework.util.ReflectionUtils;
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -24,27 +23,22 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Optional<Product> getProductById(Long id) {
-        return productRepository.findById(id);
+    public Product getProductById(Long id) {
+        return productRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    public void createProduct(Product product) {
-        productRepository.save(product);
+    public Product createProduct(Product product) {
+        return productRepository.save(product);
     }
 
     public Product updateProduct(Long id, Product product) {
-        if (productRepository.existsById(id)) {
+            productRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
             product.setProduct_id(id);
             return productRepository.save(product);
-        } else {
-            return null;
-        }
     }
 
     public Product patchProduct(Long id, Map<String, Object> updates) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-        if (optionalProduct.isPresent()) {
-            Product product = optionalProduct.get();
+            Product product = productRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
             updates.forEach((key, value) -> {
                 Field field = ReflectionUtils.findField(Product.class, key);
                 if (field != null) {
@@ -53,9 +47,6 @@ public class ProductService {
                 }
             });
             return productRepository.save(product);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ce produit n'existe pas");
-        }
     }
 
 
