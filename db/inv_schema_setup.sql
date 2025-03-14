@@ -320,31 +320,31 @@ COMMIT;
 -- Recreate Indexes
 
 -- Product Indexes
-CREATE INDEX idx_product_name ON product(name);
-CREATE INDEX idx_product_is_active ON product(is_active);
-CREATE INDEX idx_product_quantity_in_stock ON product(quantity_in_stock);
+CREATE INDEX idx_product_name ON product(name) TABLESPACE inventory_index_tablespace;
+CREATE INDEX idx_product_is_active ON product(is_active) TABLESPACE inventory_index_tablespace;
+CREATE INDEX idx_product_quantity_in_stock ON product(quantity_in_stock) TABLESPACE inventory_index_tablespace;
 COMMIT;
 
 -- Supplier Indexes
-CREATE INDEX idx_supplier_name ON supplier(name);
-CREATE INDEX idx_supplier_contact_email ON supplier(contact_email);
+CREATE INDEX idx_supplier_name ON supplier(name) TABLESPACE inventory_index_tablespace;
+CREATE INDEX idx_supplier_contact_email ON supplier(contact_email) TABLESPACE inventory_index_tablespace;
 COMMIT;
 
 -- Purchase Order Indexes
-CREATE INDEX idx_purchase_order_supplier_id ON purchase_order(supplier_id);
-CREATE INDEX idx_purchase_order_order_date ON purchase_order(order_date);
-CREATE INDEX idx_purchase_order_status_id ON purchase_order(status_id);
+CREATE INDEX idx_purchase_order_supplier_id ON purchase_order(supplier_id) TABLESPACE inventory_index_tablespace;
+CREATE INDEX idx_purchase_order_order_date ON purchase_order(order_date) TABLESPACE inventory_index_tablespace;
+CREATE INDEX idx_purchase_order_status_id ON purchase_order(status_id) TABLESPACE inventory_index_tablespace;
 COMMIT;
 
 -- Purchase Order Item Indexes
-CREATE INDEX idx_purchase_order_item_order_id ON purchase_order_item(order_id);
-CREATE INDEX idx_purchase_order_item_product_id ON purchase_order_item(product_id);
+CREATE INDEX idx_purchase_order_item_order_id ON purchase_order_item(order_id) TABLESPACE inventory_index_tablespace;
+CREATE INDEX idx_purchase_order_item_product_id ON purchase_order_item(product_id) TABLESPACE inventory_index_tablespace;
 COMMIT;
 
 -- Inventory Transaction Indexes
-CREATE INDEX idx_inventory_transaction_product_id ON inventory_transaction(product_id);
-CREATE INDEX idx_inventory_transaction_type_id ON inventory_transaction(type_id);
-CREATE INDEX idx_inventory_transaction_transaction_date ON inventory_transaction(transaction_date);
+CREATE INDEX idx_inventory_transaction_product_id ON inventory_transaction(product_id) TABLESPACE inventory_index_tablespace;
+CREATE INDEX idx_inventory_transaction_type_id ON inventory_transaction(type_id) TABLESPACE inventory_index_tablespace;
+CREATE INDEX idx_inventory_transaction_transaction_date ON inventory_transaction(transaction_date) TABLESPACE inventory_index_tablespace;
 COMMIT;
 
 -- Recreate Triggers
