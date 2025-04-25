@@ -10,3 +10,5 @@
 ## Technologies
 - Java spring boot
 - Oracle database
+
+> project still in developement, i work on it when i have spare time
